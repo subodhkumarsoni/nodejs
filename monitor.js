@@ -1,14 +1,11 @@
-const os = require('node:os');
+import chalk from 'chalk';
+import os from 'node:os';
+
 function monitor() {
-    //Take a snapshot 
-    //Take another snapshot after a second
-
-
-
+    // Take a snapshot
     const oldCpus = os.cpus();
 
-    console.log('old', oldCpus);
-
+    // Take another snapshot after a second
     setTimeout(() => {
         const newCpus = os.cpus();
 
@@ -16,29 +13,31 @@ function monitor() {
             return {
                 core: i,
                 usage: calculateCPU(oldCpus[i], newCpus[i]) + '%',
-
-
-
             };
         });
 
-        console.table(usage)
+        console.log(chalk.bgMagenta(`========System Stats========`));
+        console.table(usage);
+
+        const totalMemGB = os.totalmem() / (1024 * 1024 * 1024);
+        const usedMemGB = (os.totalmem() - os.freemem()) / (1024 * 1024 * 1024);
+
+        const memLine = `Memory used: ${usedMemGB.toFixed(2)} GB / ${totalMemGB.toFixed(2)} GB`;
+
+        console.log(usedMemGB > 16 ? chalk.redBright(memLine) : chalk.greenBright(memLine));
     }, 1000);
 }
 
+function calculateCPU(oldCpu, newCpu) {
+    const oldTotal = Object.values(oldCpu.times).reduce((a, b) => a + b);
+    const newTotal = Object.values(newCpu.times).reduce((a, b) => a + b);
 
-function calculateCPU(oldCpu, newCpus) {
-    const oldTotal = Object.values(oldCpus.times).reduce((a, b) =>
-        a + b);
-    const newTotal = Object.values(newCpus.times).reduce((a, b) =>
-        a + b);
-
-    const idle = newCpus.times.idle - oldCpus.times.idle
+    const idle = newCpu.times.idle - oldCpu.times.idle;
 
     const total = newTotal - oldTotal;
     const used = total - idle;
+
     return ((100 * used) / total).toFixed(1);
 }
-
 
 setInterval(monitor, 1000);
