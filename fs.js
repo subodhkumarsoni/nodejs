@@ -6,12 +6,37 @@ function creatFile(pathname) {
     // fs.writeFileSync(pathname, 'Hello Nodejs!\n');
     // fs.appendFileSync(pathname, 'Hello javascript!');
 
-   // Async
+    // Async 
+    // Error first callbacks
+    fs.appendFile(pathname, 'Hello Nodejs!\n', (err) => {
+        if (err) {
+            console.log('something went wrong while creting file.');
+            return
+        }
+
+
+        console.log('File has been created Synchronously.')
+
+    });
+
+
+    
+     fs.appendFile(pathname, 'Hello javascript!\n', (err) => {
+        if (err) {
+            console.log('something went wrong while creting file.');
+            return
+        }
+
+
+        console.log('File has been created Synchronously.')
+
+    });
+    
 
 
 
 
-    console.log('file has been created!');
+    console.log('file operation done!');
 
 }
 
