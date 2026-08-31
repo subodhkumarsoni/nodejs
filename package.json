@@ -11,6 +11,10 @@
     "type": "git",
     "url": "git+https://github.com/subodhkumarsoni/nodejs.git"
   },
+  "bin" : {
+    "fman": "./fileManager.js"
+  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",

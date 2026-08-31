@@ -1,7 +1,17 @@
+#!/usr/bin/env node
+
 import * as readline from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import chalk from 'chalk';
-import { createFolder, createFile ,writeToFile, deleteFile, deleteFolder } from './fs.js';
+
+import {
+   createFolder,
+   createFile,
+   writeToFile,
+   deleteFile,
+   deleteFolder,
+   listItems
+} from './fs.js';
 
 const rl = readline.createInterface({
    input: stdin,
@@ -9,6 +19,8 @@ const rl = readline.createInterface({
 });
 
 async function menu() {
+   console.clear();
+
    console.log(chalk.blue.bold('\n📂 File System Manager\n'));
 
    const options = [
@@ -22,7 +34,11 @@ async function menu() {
    ];
 
    options.forEach((opt, i) => {
-      console.log(chalk.yellow(`${i + 1}.`) + ' ' + chalk.white(opt));
+      console.log(
+         chalk.yellow(`${i + 1}.`) +
+         ' ' +
+         chalk.white(opt)
+      );
    });
 
    const answer = await rl.question(
@@ -30,6 +46,7 @@ async function menu() {
    );
 
    switch (answer.trim()) {
+
       case '1': {
          const folderPath = await rl.question(
             chalk.cyan('Folder path: ')
@@ -50,7 +67,7 @@ async function menu() {
          );
 
          await createFile(filePath, initialContent);
-         console.log(chalk.green('☑️ File content added.'));
+         console.log(chalk.green('☑️ File created.'));
          break;
       }
 
@@ -60,43 +77,74 @@ async function menu() {
          );
 
          const appendContent = await rl.question(
-            chalk.cyan(' Content: ')
+            chalk.cyan('Content: ')
          );
 
-         await createFile(appendFilePath, `\n${appendContent}`);
+         await writeToFile(
+            appendFilePath,
+            `\n${appendContent}`
+         );
 
-         console.log(chalk.green('☑️ File created.'));
+         console.log(chalk.green('☑️ Content added to file.'));
          break;
       }
 
-      case '4':
-         const deleteFilePath = await rl.question(chalk.cyan('File to delete: '))
-         await deleteFile(deleteFilePath) 
-       
+      case '4': {
+         const deleteFilePath = await rl.question(
+            chalk.cyan('File to delete: ')
+         );
+
+         await deleteFile(deleteFilePath);
+
          console.log(chalk.green('☑️ File deleted.'));
          break;
+      }
 
-         case '5':
-            const deleteFolderPath = await rl.question(chalk.cyan('Folder to delete: '));
-            await deleteFile(deleteFolderPath);
+      case '5': {
+         const deleteFolderPath = await rl.question(
+            chalk.cyan('Folder to delete: ')
+         );
 
-            console.log(chalk.green('☑️ Folder deleted.'));
-            break;
+         await deleteFolder(deleteFolderPath);
 
-            case '6':
-               const listPath = await rl.question(chalk.cyan('Folder path (Enter for current): '));
+         console.log(chalk.green('☑️ Folder deleted.'));
+         break;
+      }
 
-               console.log(chalk.blue('\nContents:'))
+      case '6': {
+         const listPath = await rl.question(
+            chalk.cyan('Folder path (Enter for current): ')
+         );
 
-               break;
+         const items = await listItems(listPath || './');
 
-         
+         console.log(chalk.blue('\nContents:\n'));
 
-      // default:
-      //    console.log(chalk.red('❌ Invalid option.'));
+         items.forEach(item => {
+            const icon =
+               item.type === 'folder' ? '📂' : '📄';
+
+            console.log(
+               `${icon} ${chalk.yellow(item.name)}`
+            );
+         });
+
+         break;
+      }
+
+      case '7':
+         rl.close();
+         return;
+
+      default:
+         console.log(chalk.red('❌ Invalid option.'));
    }
 
-   rl.close();
+   await rl.question(
+      chalk.gray('\nPress ENTER to continue...')
+   );
+
+   menu();
 }
 
 menu();
