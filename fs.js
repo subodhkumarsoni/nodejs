@@ -1,10 +1,15 @@
 import fs from 'node:fs/promises';
 
+export async function listItems(listPath = './') {
+    const items = await fs.readdir (listPath, {withFileTypes: true});
+    console.log(items);
+}
+
 async function deleteFolder(folderPath) {
     await fs.rm(folderPath, {recursive: true})
 }
 
-async function deleteFile(filepath) {
+export async function deleteFile(filepath) {
     await fs.unlink(filepath);
 }
 
@@ -15,15 +20,15 @@ async function readFile(pathname) {
 }
 
 
-async function createFolder(foldername) {
+export async function createFolder(foldername) {
     await fs.mkdir(foldername, {recursive: true});
 }
 
-async function writeToFile(pathname, content = '') {
+export async function writeToFile(pathname, content = '') {
     await fs.appendFile(pathname, content);
 }
 
-async function createFile(pathname, content = '') {
+export async function createFile(pathname, content = '') {
     await fs.writeFile(pathname, content);
 }
 
