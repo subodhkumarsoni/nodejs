@@ -1,0 +1,18 @@
+[
+  {
+    "name": "netflix subscription",
+    "amount": 499
+  },
+  {
+    "name": "prime subscription",
+    "amount": 399
+  },
+  {
+    "name": "gym subscription",
+    "amount": 3999
+  },
+  {
+    "name": "electric subscription",
+    "amount": 999
+  }
+]
